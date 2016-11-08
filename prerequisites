@@ -1,0 +1,22 @@
+sudo apt-get install mysql-server --fix-missing
+	choose a password: M0t0rC0ntr0l
+
+
+install RPI.GPIO
+sudo apt-get install python-dev python-rpi.gpio
+sudo apt-get install python-pip
+
+sudo pip install pycryptodome flask flask-login tabulate simplejson sqlalchemy pymssql picamera
+
+
+
+
+LINUX PERMISSIONS
+add group motorcontrol
+add pi to motorcontrol
+add dbuser to motorcontrol
+add user miscUser not a member of motorcontrol
+add the private key read permissions to the motorcontrol group
+
+
+
