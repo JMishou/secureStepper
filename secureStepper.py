@@ -418,6 +418,7 @@ def authenticate():
 		print "Login Success."
 		global currentUser 
 		currentUser = userdb.getUser(userName)
+		sendEmail(userName + " has logged in.", "A user has successfully logged in.")
 	else:
 		user = userdb.getUser(userName)
 		if user == None or user['locked']:
@@ -442,7 +443,6 @@ def sendEmail(subject,body):
 	gmail.send()                                
 
 if __name__ == '__main__':    
-	print userdb.emailList()
         if authenticate():
 		curses.wrapper(MyApp)
 	else:
