@@ -436,7 +436,6 @@ def sendEmail(subject,body):
 	image_name = "images/" + time.strftime("%d-%m-%y_%H-%M-%S") + ".jpg"
 	camera.capture(image_name)
 	recipients = userdb.emailList()
-	print recipients
 	if len(recipients) > 0:
 		gmail.subject = subject
 		gmail.body = body
