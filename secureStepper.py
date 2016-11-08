@@ -436,11 +436,13 @@ def sendEmail(subject,body):
 	image_name = "images/" + time.strftime("%d-%m-%y_%H-%M-%S") + ".jpg"
 	camera.capture(image_name)
 	recipients = userdb.emailList()
-	gmail.subject = subject
-	gmail.body = body
-	gmail.addRecipients(recipients)
-	gmail.addAttachments(image_name)
-	gmail.send()                                
+	print recipients
+	if len(recipients) > 0:
+		gmail.subject = subject
+		gmail.body = body
+		gmail.addRecipients(recipients)
+		gmail.addAttachments(image_name)
+		gmail.send()                                
 
 if __name__ == '__main__':    
         if authenticate():
