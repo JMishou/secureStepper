@@ -10,6 +10,7 @@ class alarm:
 		self.output = gpio_out
 		self.init = 0
 		self.enabled = 0
+		self.duration = 10
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setup(self.input, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
 		GPIO.setup(self.output, GPIO.OUT)
@@ -18,7 +19,7 @@ class alarm:
 
 	def gpio_interrupt(self, channel):
 
-		self.alert(0.2)
+		self.alert(self.duration)
 
 	def enable(self):
 		try:

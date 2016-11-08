@@ -412,6 +412,7 @@ class MyApp(object):
 	self.gmail.send()
 
 def authenticate():
+	alarmDuration = 20
 	userName = raw_input('Please Enter User Name: ')
 	authenticated = userdb.cliAuthenticate(userName)
 	if authenticated:
@@ -422,13 +423,13 @@ def authenticate():
 	else:
 		user = userdb.getUser(userName)
 		if user == None or user['locked']:
-			alrm.alert(0.2)
+			alrm.alert(alarmDuration)
 			if user == None:
 				sendEmail("Unknown User: " + userName, "An unknown user has attempted to log into the system")
 			else:
 				sendEmail("User Locked: " + userName, "User is locked out of the system.")
 		print "Login Failed"
-		time.sleep(0.5)
+		time.sleep(alarmDuration+5)
 
 	return authenticated       
 
