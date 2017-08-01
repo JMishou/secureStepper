@@ -1,6 +1,5 @@
 import smtplib
 import email.message
-import smtplib
 from os.path import basename
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart

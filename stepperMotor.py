@@ -15,7 +15,7 @@ class stepperMotor():  #Class for controlling a stepper motor using the L293D
 	def __init__(self, A1,A2,B1,B2,EN):
 
 		GPIO.setmode(GPIO.BCM)		#sets the gpio to match the BCM number and not the physical pin number on the pin header
-		
+		 
 
 		self.enable_pin = EN	#GPIO that is connected to 1,2 EN and 3,4 EN of the L293D chip physical pins 1 and 9
 		self.coil_A_1_pin = A1	#GPIO that is connected to 1A pin of the L293D chip physical pin 2

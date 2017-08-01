@@ -32,10 +32,12 @@ class alarm:
 	def disable(self):
 		try:
 			if self.enabled == 1:
+				GPIO.output(self.output, GPIO.LOW)
 				GPIO.remove_event_detect(self.input)
 				signal.setitimer(signal.ITIMER_REAL, 0) # Disable the alarm
 				self.enabled = 0
 		except Exception as e:
+			self.__del__()
 			gracefulExit(e)
 
 	def alert(self, duration):

@@ -6,13 +6,11 @@ from sqlalchemy.orm import relationship, backref, sessionmaker
 from sqlalchemy.types import TypeDecorator, Unicode
 from sqlalchemy.orm import scoped_session
 import binascii
-import logging
 import getpass
 import os
 import sys
 import time
 from encryption import *
-from Crypto.Hash import SHA256
 import simplejson as json
 
 
@@ -27,7 +25,7 @@ class User(Base):
  
     id = Column(Integer, primary_key=True)
     username = Column(String(100))
-    password = Column(CHAR(64))
+    password = Column(CHAR(150))
     salt = Column(CHAR(64))
     group = Column(String(10))  # Groups: admin: all access, tech: technician controls, user: user controls
     locked = Column(BOOLEAN)
@@ -160,21 +158,19 @@ class userDatabase():
 			self.session.commit()
 			print userName + "group changed:" + group
 
-	def authenticateUser(self, userName, password):
+	def authenticateUser(self, userName, hashedPassword):
 		q = self.queryUser(userName)
 		if q == None:
 			print userName + ": not a valid user name."
 		else:
-			return q.password == password
+			return q.password == hashedPassword
 
 	def authenticateUserHash(self, userName, password):
 		q = self.queryUser(userName)
 		if q == None:
 			print userName + ": not a valid user name."
 		else:
-			hash = SHA256.new()
-			hash.update(password + q.salt)
-			hashed = hash.hexdigest()
+			hashed = hashData(password + q.salt)
 			return hashed == q.password
 
 	def cliAuthenticate(self,userName=None,group=None):
@@ -195,9 +191,7 @@ class userDatabase():
 
 		while pass_try < pass_attempts:
 			slt = result.salt
-			hash = SHA256.new()
-			hash.update(getpass.getpass('Please Enter Password: ')+ slt)
-			user_input = hash.hexdigest()
+			user_input = hashData(getpass.getpass('Please Enter Password: ')+ slt)
 			
 			if user_input != result.password:
 				pass_try += 1
@@ -234,9 +228,7 @@ class userDatabase():
 
 		while pass_try < pass_attempts:
 			slt = result.salt
-			hash = SHA256.new()
-			hash.update(getpass.getpass('Please Enter Password: ')+ slt)
-			user_input = hash.hexdigest()
+			user_input = hashData(getpass.getpass('Please Enter Password: ')+ slt)
 			if user_input != result.password:
 				pass_try += 1
 				print 'Incorrect Password, ' + str(pass_attempts-pass_try) + ' more attemts left\n'
@@ -265,12 +257,8 @@ class userDatabase():
 		password2 = 1;
 		salt = binascii.hexlify(os.urandom(32))
 		while password != password2:
-			hash = SHA256.new()
-			hash.update(getpass.getpass('Please Enter Password: ')+ slt)
-			password = hash.hexdigest()
-			hash = SHA256.new()
-			hash.update(getpass.getpass('Please Enter Password: ')+ slt)
-			password2 = hash.hexdigest()
+			password = hashData(getpass.getpass('Please Enter Password: ')+ salt)
+			password2 = hashData(getpass.getpass('Please Re-Enter Password: ')+ salt)
 			if password != password2:
 				print "Passwords do not match please try again!"
 		group = raw_input('Please Enter the User Group: ')
@@ -298,12 +286,8 @@ class userDatabase():
 		
 		salt = binascii.hexlify(os.urandom(32))
 		while password != password2:
-			hash = SHA256.new()
-			hash.update(getpass.getpass('Please Enter Password: ')+ slt)
-			password = hash.hexdigest()
-			hash = SHA256.new()
-			hash.update(getpass.getpass('Please Enter Password: ')+ slt)
-			password2 = hash.hexdigest()
+			password = hashData(getpass.getpass('Please Enter Password: ')+ slt)
+			password2 = hashData(getpass.getpass('Please Re-Enter Password: ')+ slt)
 			if password != password2:
 				print "Passwords do not match please try again!"
 

@@ -106,7 +106,7 @@ class Menu(object):
 	except self.exit_menu:
 		pass
 	except Exception as e:
-		sys.exit(traceback.format_exc())
+		sysexit(e)
 
         self.window.clear()
         self.panel.hide()
@@ -163,14 +163,14 @@ class MyApp(object):
 		self.alarm.enable()
 		self.print_msg("Alarm Enabled",10,10)
 	except Exception as e:
-		self.gracefulExit()
+		self.gracefulExit(e)
 
     def disableAlarm(self):
 	try:
 		self.alarm.disable()
 		self.print_msg("Alarm Disabled",10,10)
 	except Exception as e:
-		self.gracefulExit()
+		self.gracefulExit(e)
 
     def setAlarm(alarm_=None, gpio_in=None, gpio_out=None):
 	if alarm!=None:
@@ -230,10 +230,10 @@ class MyApp(object):
 	except Exception as e:	
 		self.gracefulExit(e)
 
-    def gracefulExit(self, excetion):
+    def gracefulExit(self, exception):
         GPIO.cleanup()
 	if exception != Menu.exitMenu:
-		sys.exit(traceback.format_exc())
+		sysexit(exception)
 		
 
 #User actions
@@ -382,7 +382,7 @@ class MyApp(object):
 	fileName = raw_input('Please enter the name of the program:')
 	
 	with open("programs/" + fileName + ".pgm",'wb') as f:
-    		pickle.dump(prog,f)
+    			pickle.dump(prog,f)
 
 	print "Created file " + fileName
 	print tabulate(prog, headers=["speed", "revolutions"])
@@ -411,6 +411,10 @@ class MyApp(object):
 	self.gmail.addRecipients(recipients)
 	self.gmail.addAttachments(image_name)
 	self.gmail.send()
+
+def sysexit(e):
+	GPIO.cleanup()
+	sys.exit(traceback.format_exc())
 
 def authenticate():
 	alarmDuration = 5
@@ -446,10 +450,14 @@ def sendEmail(subject,body):
 		gmail.send()                                
 
 if __name__ == '__main__':    
-        if authenticate():
-		curses.wrapper(MyApp)
-	else:
-                GPIO.cleanup()
-                sys.exit("Unauthorized user")
-		
-  
+	try:
+		if authenticate():
+			curses.wrapper(MyApp)
+		else:
+		        GPIO.cleanup()
+		        sys.exit("Unauthorized user")
+	except KeyboardInterrupt: 
+		print ""
+
+	finally:
+	  	GPIO.cleanup()
