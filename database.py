@@ -8,11 +8,11 @@ from sqlalchemy.orm import scoped_session
 import binascii
 import logging
 import getpass
-import hashlib
 import os
 import sys
 import time
 from encryption import *
+from Crypto.Hash import SHA256
 import simplejson as json
 
 
@@ -172,7 +172,9 @@ class userDatabase():
 		if q == None:
 			print userName + ": not a valid user name."
 		else:
-			hashed = hashlib.sha256(password + q.salt).hexdigest()
+			hash = SHA256.new()
+			hash.update(password + q.salt)
+			hashed = hash.hexdigest()
 			return hashed == q.password
 
 	def cliAuthenticate(self,userName=None,group=None):
@@ -193,7 +195,10 @@ class userDatabase():
 
 		while pass_try < pass_attempts:
 			slt = result.salt
-			user_input = hashlib.sha256(getpass.getpass('Please Enter Password: ')+ slt).hexdigest()
+			hash = SHA256.new()
+			hash.update(getpass.getpass('Please Enter Password: ')+ slt)
+			user_input = hash.hexdigest()
+			
 			if user_input != result.password:
 				pass_try += 1
 				print 'Incorrect Password, ' + str(pass_attempts-pass_try) + ' more attemts left\n'
@@ -229,7 +234,9 @@ class userDatabase():
 
 		while pass_try < pass_attempts:
 			slt = result.salt
-			user_input = hashlib.sha256(getpass.getpass('Please Enter Password: ')+ slt).hexdigest()
+			hash = SHA256.new()
+			hash.update(getpass.getpass('Please Enter Password: ')+ slt)
+			user_input = hash.hexdigest()
 			if user_input != result.password:
 				pass_try += 1
 				print 'Incorrect Password, ' + str(pass_attempts-pass_try) + ' more attemts left\n'
@@ -258,8 +265,12 @@ class userDatabase():
 		password2 = 1;
 		salt = binascii.hexlify(os.urandom(32))
 		while password != password2:
-			password = hashlib.sha256(getpass.getpass('Please Enter a Password: ') + salt).hexdigest()
-			password2 = hashlib.sha256(getpass.getpass('Please re-enter the Password: ') + salt).hexdigest()
+			hash = SHA256.new()
+			hash.update(getpass.getpass('Please Enter Password: ')+ slt)
+			password = hash.hexdigest()
+			hash = SHA256.new()
+			hash.update(getpass.getpass('Please Enter Password: ')+ slt)
+			password2 = hash.hexdigest()
 			if password != password2:
 				print "Passwords do not match please try again!"
 		group = raw_input('Please Enter the User Group: ')
@@ -287,8 +298,12 @@ class userDatabase():
 		
 		salt = binascii.hexlify(os.urandom(32))
 		while password != password2:
-			password = hashlib.sha256(getpass.getpass('Please Enter a new Password: ') + salt).hexdigest()
-			password2 = hashlib.sha256(getpass.getpass('Please re-enter the Password: ') + salt).hexdigest()
+			hash = SHA256.new()
+			hash.update(getpass.getpass('Please Enter Password: ')+ slt)
+			password = hash.hexdigest()
+			hash = SHA256.new()
+			hash.update(getpass.getpass('Please Enter Password: ')+ slt)
+			password2 = hash.hexdigest()
 			if password != password2:
 				print "Passwords do not match please try again!"
 

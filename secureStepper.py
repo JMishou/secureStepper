@@ -231,6 +231,7 @@ class MyApp(object):
 		self.gracefulExit(e)
 
     def gracefulExit(self, excetion):
+        GPIO.cleanup()
 	if exception != Menu.exitMenu:
 		sys.exit(traceback.format_exc())
 		
@@ -412,7 +413,7 @@ class MyApp(object):
 	self.gmail.send()
 
 def authenticate():
-	alarmDuration = 20
+	alarmDuration = 5
 	userName = raw_input('Please Enter User Name: ')
 	authenticated = userdb.cliAuthenticate(userName)
 	if authenticated:
@@ -448,5 +449,7 @@ if __name__ == '__main__':
         if authenticate():
 		curses.wrapper(MyApp)
 	else:
-		sys.exit("Unauthorized user")                   
+                GPIO.cleanup()
+                sys.exit("Unauthorized user")
+		
   
